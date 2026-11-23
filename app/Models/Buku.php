@@ -16,9 +16,15 @@ class Buku extends Model
         'tgl_terbit',
         'jenis_buku',
         'cover',
+        'buku_seo'
     ];
 
     protected $casts = [
         'tgl_terbit' => 'date',
     ];
+
+    public function photos()
+    {
+        return $this->hasMany(Post::class, 'buku_id');
+    }
 }

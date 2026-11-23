@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Buku;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BukuController extends Controller
 {
@@ -24,6 +25,26 @@ class BukuController extends Controller
             'buku.index',
             compact('data_buku', 'no', 'jumlah_buku')
         );
+    }
+
+    // Method untuk menampilkan daftar buku
+    public function listbuku()
+    {
+        $bukus = Buku::orderBy('id', 'desc')->paginate(8);
+
+        return view('buku.list', compact('bukus'));
+    }
+
+    // Method untuk menampilkan detail buku beserta Gallery
+    public function galbuku($title)
+    {
+        $buku = Buku::where('buku_seo', $title)->firstOrFail();
+
+        $galeris = $buku->photos()
+            ->orderBy('id', 'desc')
+            ->paginate(6);
+
+        return view('buku.detail', compact('buku', 'galeris'));
     }
 
     public function search(Request $request)
@@ -84,6 +105,8 @@ class BukuController extends Controller
             'tgl_terbit'
         ]);
 
+        $data['buku_seo'] = Str::slug($request->judul);
+
         if ($request->hasFile('cover')) {
             $data['cover'] = $request->file('cover')->store('covers', 'public');
         }
@@ -116,7 +139,6 @@ class BukuController extends Controller
             'judul.required' => 'Judul buku wajib diisi.',
             'judul.string' => 'Judul buku harus berupa teks.',
             'penulis.required' => 'Nama penulis wajib diisi.',
-            'penulis.string' => 'Nama penulis harus berupa teks.',
             'jenis_buku.required' => 'Jenis buku wajib dipilih.',
             'jenis_buku.in' => 'Jenis buku harus Fiksi atau Non-Fiksi.',
             'harga.required' => 'Harga buku wajib diisi.',
@@ -137,6 +159,8 @@ class BukuController extends Controller
             'harga',
             'tgl_terbit'
         ]);
+
+        $data['buku_seo'] = Str::slug($request->judul);
 
         if ($request->hasFile('cover')) {
 

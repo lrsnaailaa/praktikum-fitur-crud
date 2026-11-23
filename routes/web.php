@@ -23,10 +23,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/buku/search', [BukuController::class, 'search'])
         ->name('buku.search');
 
+    // Route halaman daftar buku
+    Route::get('/list-buku', [BukuController::class, 'listbuku'])
+        ->name('buku.list');
+
+    // Route halaman detail buku
+    Route::get('/detail-buku/{title}', [BukuController::class, 'galbuku'])
+        ->name('galeri.buku');
+
     Route::resource('buku', BukuController::class);
 
     Route::resource('gallery', GalleryController::class);
 
     Route::resource('users', UserController::class)->except('show');
 });
-
